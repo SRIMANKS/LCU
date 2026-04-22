@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>leetGraph — Problem Graph</title>
-    <link rel="icon" type="image/png" href="../node.png" />
+    <title>LeetCode Universe — Problem Graph</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
@@ -44,23 +43,6 @@
         align-items: center;
         gap: 12px;
         margin-bottom: 8px;
-      }
-      .ship-link {
-        margin-left: auto;
-        font-size: 11px;
-        color: #8b949e;
-        text-decoration: none;
-        font-weight: 500;
-        border: 1px solid #30363d;
-        border-radius: 999px;
-        padding: 4px 10px;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-      }
-      .ship-link:hover {
-        color: #58a6ff;
-        border-color: #58a6ff;
-        background: rgba(88, 166, 255, 0.08);
       }
       h1 {
         color: #e6edf3;
@@ -708,21 +690,7 @@
       <!-- Header -->
       <div id="header">
         <div class="header-top">
-          <h1 style="display: flex; align-items: center; gap: 8px">
-            <img
-              src="../node.png"
-              alt="leetGraph logo"
-              style="width: 30px; height: 30px; object-fit: contain; background-color: white; border-radius: 50%; padding: 3px;"
-            />
-            <span>Leet Graph</span>
-          </h1>
-          <a
-            class="ship-link"
-            href="https://www.linkedin.com/in/srisowrirajan-k-s/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Shipped with style by Sriman</a
-          >
+          <h1>⬡ LeetCode Universe</h1>
         </div>
         <div class="controls-row">
           <div class="ctrl">
@@ -772,27 +740,14 @@
             <div class="btn-row">
               <button class="i-btn" id="reset-btn">↺ Reset</button>
               <button class="i-btn primary" id="center-btn">⊕ Center</button>
+              <button class="i-btn" id="labels-btn">Labels: ON</button>
             </div>
           </div>
 
           <div class="ctrl-sep"></div>
 
-          <div class="ctrl" style="flex-shrink: 0">
-            <div
-              class="ctrl-label"
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-              "
-            >
-              <span>🎵 Playlist</span>
-              <span
-                id="playlist-status"
-                style="font-size: 10px; color: #8b949e; font-weight: 500"
-              ></span>
-            </div>
+          <div class="ctrl" style="flex-shrink: 0; margin-top: 2px">
+            <div class="ctrl-label">🎵 Playlist</div>
             <div style="display: flex; gap: 4px; align-items: center">
               <input
                 type="text"
@@ -810,12 +765,23 @@
                 ✕
               </button>
             </div>
+            <div
+              id="playlist-status"
+              style="
+                font-size: 10px;
+                color: #8b949e;
+                margin-top: 2px;
+                min-height: 13px;
+              "
+            ></div>
           </div>
         </div>
 
         <div id="stats">
           <div>Nodes: <span class="sv" id="s-nodes">0</span></div>
           <div>Edges: <span class="sv" id="s-edges">0</span></div>
+          <div>Visible: <span class="sv" id="s-visible">0</span></div>
+          <div>Communities: <span class="sv" id="s-comm">0</span></div>
           <div style="color: #58a6ff; font-size: 10px; margin-left: 4px">
             Hover a node • Scroll/drag to navigate
           </div>
@@ -830,6 +796,219 @@
         </div>
         <canvas id="main-canvas"></canvas>
 
+        <!-- Physics Panel -->
+        <div id="physics-panel">
+          <div id="physics-header">
+            <span id="physics-title">⚛ Physics Controls</span>
+            <span id="physics-chevron">▾</span>
+          </div>
+          <div id="physics-body">
+            <div class="ph-section-label">Cluster Spawn</div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Cluster H-Spread</span
+                ><span class="ph-val" id="pv-spreadX">550</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-spreadX"
+                min="100"
+                max="1500"
+                step="50"
+                value="550"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Cluster V-Jitter</span
+                ><span class="ph-val" id="pv-spreadY">100</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-spreadY"
+                min="0"
+                max="600"
+                step="20"
+                value="100"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Intra Spawn Radius</span
+                ><span class="ph-val" id="pv-intraSpread">160</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-intraSpread"
+                min="20"
+                max="500"
+                step="10"
+                value="160"
+              />
+            </div>
+            <hr class="ph-sep" />
+            <div class="ph-section-label">Community Repulsion</div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Repel Strength</span
+                ><span class="ph-val" id="pv-repelStr">14000</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-repelStr"
+                min="500"
+                max="60000"
+                step="500"
+                value="14000"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Repel Max Distance</span
+                ><span class="ph-val" id="pv-repelMaxD">700</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-repelMaxD"
+                min="100"
+                max="2000"
+                step="50"
+                value="700"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Attract-back Threshold</span
+                ><span class="ph-val" id="pv-attractThresh">850</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-attractThresh"
+                min="200"
+                max="3000"
+                step="50"
+                value="850"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Attract-back Strength</span
+                ><span class="ph-val" id="pv-attractStr">0.003</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-attractStr"
+                min="0"
+                max="0.05"
+                step="0.001"
+                value="0.003"
+              />
+            </div>
+            <hr class="ph-sep" />
+            <div class="ph-section-label">Intra-Community Cohesion</div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Cohesion Strength</span
+                ><span class="ph-val" id="pv-cohesionStr">0.018</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-cohesionStr"
+                min="0"
+                max="0.1"
+                step="0.001"
+                value="0.018"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Cohesion Threshold</span
+                ><span class="ph-val" id="pv-cohesionThresh">180</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-cohesionThresh"
+                min="20"
+                max="600"
+                step="10"
+                value="180"
+              />
+            </div>
+            <hr class="ph-sep" />
+            <div class="ph-section-label">Global Forces</div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Cross-cluster Link Dist</span
+                ><span class="ph-val" id="pv-linkDistInter">350</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-linkDistInter"
+                min="50"
+                max="1000"
+                step="25"
+                value="350"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Cross-cluster Link Strength</span
+                ><span class="ph-val" id="pv-linkStrInter">0.08</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-linkStrInter"
+                min="0"
+                max="0.5"
+                step="0.01"
+                value="0.08"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Charge Strength</span
+                ><span class="ph-val" id="pv-chargeStr">-90</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-chargeStr"
+                min="-800"
+                max="0"
+                step="10"
+                value="-90"
+              />
+            </div>
+            <div class="ph-row">
+              <div class="ph-label-row">
+                <span class="ph-label">Collision Padding</span
+                ><span class="ph-val" id="pv-collidePad">10</span>
+              </div>
+              <input
+                class="ph-slider"
+                type="range"
+                id="ps-collidePad"
+                min="0"
+                max="40"
+                step="1"
+                value="10"
+              />
+            </div>
+            <button id="physics-apply-btn">↺ Re-run Simulation</button>
+          </div>
+        </div>
+
         <div class="legend">
           <div class="legend-title">Difficulty</div>
           <div class="l-item">
@@ -843,6 +1022,20 @@
           <div class="l-item">
             <div class="l-dot" style="background: #ef4743"></div>
             Hard
+          </div>
+          <div style="border-top: 1px solid #30363d; margin: 7px 0"></div>
+          <div class="legend-title">Community</div>
+          <div class="l-item">
+            <div
+              style="
+                width: 20px;
+                height: 8px;
+                border-radius: 2px;
+                background: rgba(88, 166, 255, 0.2);
+                border: 1px dashed rgba(88, 166, 255, 0.5);
+              "
+            ></div>
+            Named cluster
           </div>
         </div>
       </div>
@@ -993,6 +1186,8 @@
         setupCanvas();
         buildFilters();
 
+        document.getElementById("s-nodes").textContent = allNodes.length;
+        document.getElementById("s-edges").textContent = allEdges.length;
         document.getElementById("loading").style.display = "none";
 
         applyFilters();
@@ -1206,6 +1401,62 @@
           autoFit();
         });
 
+        document
+          .getElementById("labels-btn")
+          .addEventListener("click", function () {
+            showLabels = !showLabels;
+            this.textContent = "Labels: " + (showLabels ? "ON" : "OFF");
+            redraw();
+          });
+
+        // ── Physics sliders ──────────────────────────────────────────
+        const phSliders = [
+          { id: "spreadX", parse: Number },
+          { id: "spreadY", parse: Number },
+          { id: "intraSpread", parse: Number },
+          { id: "repelStr", parse: Number },
+          { id: "repelMaxD", parse: Number },
+          { id: "attractThresh", parse: Number },
+          { id: "attractStr", parse: parseFloat },
+          { id: "cohesionStr", parse: parseFloat },
+          { id: "cohesionThresh", parse: Number },
+          { id: "linkDistInter", parse: Number },
+          { id: "linkStrInter", parse: parseFloat },
+          { id: "chargeStr", parse: Number },
+          { id: "collidePad", parse: Number },
+        ];
+        phSliders.forEach(({ id, parse }) => {
+          const slider = document.getElementById(`ps-${id}`);
+          const valEl = document.getElementById(`pv-${id}`);
+          if (!slider) return;
+          slider.addEventListener("input", () => {
+            PHYS[id] = parse(slider.value);
+            valEl.textContent = slider.value;
+          });
+        });
+
+        // Physics panel collapse toggle
+        document
+          .getElementById("physics-header")
+          .addEventListener("click", () => {
+            const body = document.getElementById("physics-body");
+            const chev = document.getElementById("physics-chevron");
+            body.classList.toggle("hidden");
+            chev.classList.toggle("open");
+          });
+
+        // Re-run simulation with new physics values
+        document
+          .getElementById("physics-apply-btn")
+          .addEventListener("click", () => {
+            // Clear cached positions so new spawn layout takes effect
+            allNodes.forEach((n) => {
+              n._sx = undefined;
+              n._sy = undefined;
+            });
+            runSimulation();
+          });
+
         // ── Playlist filter ───────────────────────────────────────────
         async function loadPlaylist() {
           const raw = document.getElementById("playlist-url").value.trim();
@@ -1235,17 +1486,14 @@
           }
 
           try {
-            const gql = `query favoriteQuestionList($favoriteSlug: String!) { favoriteQuestionList(favoriteSlug: $favoriteSlug) { questions { titleSlug } } }`;
-            const res = await fetch("https://corsproxy.io/?https://leetcode.com/graphql", {
+            const gql = `query { problemsetQuestionList: questionList(categorySlug:"" limit:-1 skip:0 filters:{listId:"${listId}"}) { questions: data { titleSlug } } }`;
+            const res = await fetch("https://leetcode.com/graphql", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                query: gql,
-                variables: { favoriteSlug: listId }
-              }),
+              body: JSON.stringify({ query: gql }),
             });
             const json = await res.json();
-            const qs = json?.data?.favoriteQuestionList?.questions || [];
+            const qs = json?.data?.problemsetQuestionList?.questions || [];
             if (!qs.length)
               throw new Error(
                 "No problems returned (check list ID or privacy)",
@@ -1289,7 +1537,6 @@
         visSet = new Set();
       let simNodes = [],
         simLinks = [];
-      let edgesReady = false;
 
       function applyFilters() {
         const q = document.getElementById("search").value.toLowerCase().trim();
@@ -1311,14 +1558,19 @@
           (e) => visSet.has(e.source) && visSet.has(e.target),
         );
 
-        document.getElementById("s-nodes").textContent = visNodes.length;
-        document.getElementById("s-edges").textContent = visEdges.length;
+        document.getElementById("s-visible").textContent = visNodes.length;
+
+        // Named communities visible
+        const visComms = Object.entries(communities).filter(
+          ([cid, c]) =>
+            c.name && (commGroups[cid] || []).some((id) => visSet.has(id)),
+        );
+        document.getElementById("s-comm").textContent = visComms.length;
 
         runSimulation();
       }
 
       function runSimulation() {
-        edgesReady = false;
         if (simulation) {
           simulation.stop();
           simulation = null;
@@ -1506,13 +1758,11 @@
               nodeMap[n.id]._sx = n.x;
               nodeMap[n.id]._sy = n.y;
             });
-            // Delay expensive edge rendering until layout calms down.
-            if (!edgesReady && simulation.alpha() < 0.08) edgesReady = true;
             redraw();
           })
           .on("end", () => {
-            edgesReady = true;
             redraw();
+            autoFit();
           });
       }
 
@@ -1563,6 +1813,97 @@
         const hov = hoveredNode;
         const hovId = hov ? hov.id : null;
 
+        // ── Community hulls ─────────────────────────────────────────
+        if (showLabels) {
+          const hullPalette = [
+            "rgba(88,166,255,",
+            "rgba(0,184,163,",
+            "rgba(255,192,30,",
+            "rgba(239,71,67,",
+            "rgba(163,113,247,",
+            "rgba(57,255,20,",
+            "rgba(255,106,0,",
+            "rgba(255,0,255,",
+          ];
+          let pi = 0;
+          const drawnComms = [];
+
+          Object.entries(communities).forEach(([cid, comm]) => {
+            if (!comm.name) return;
+            const members = (commGroups[cid] || []).filter((id) =>
+              visSet.has(id),
+            );
+            if (members.length < 2) return;
+
+            const pts = members.map((id) => {
+              const sn = nodeMap[id];
+              const sx = sn && sn.x !== undefined ? sn.x : sn._sx || W / 2;
+              const sy = sn && sn.y !== undefined ? sn.y : sn._sy || H / 2;
+              return [transform.applyX(sx), transform.applyY(sy)];
+            });
+
+            const hull = d3.polygonHull(pts);
+            if (!hull || hull.length < 3) return;
+
+            const color = hullPalette[pi % hullPalette.length];
+            pi++;
+
+            // Calculate centroid for hull expansion and label fallback
+            const cx = hull.reduce((s, p) => s + p[0], 0) / hull.length;
+            const cy = hull.reduce((s, p) => s + p[1], 0) / hull.length;
+
+            // Expand hull outward
+            const expanded = hull.map(([x, y]) => {
+              const dx = x - cx,
+                dy = y - cy;
+              const len = Math.sqrt(dx * dx + dy * dy) || 1;
+              const pad = 14 * transform.k;
+              return [x + (dx / len) * pad, y + (dy / len) * pad];
+            });
+
+            // Draw hull fill
+            ctx.beginPath();
+            ctx.moveTo(expanded[0][0], expanded[0][1]);
+            for (let i = 1; i < expanded.length; i++)
+              ctx.lineTo(expanded[i][0], expanded[i][1]);
+            ctx.closePath();
+            ctx.fillStyle = color + "0.07)";
+            ctx.fill();
+            ctx.setLineDash([5, 3]);
+            ctx.strokeStyle = color + "0.35)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Find namesake node to anchor label
+            let namesakeX = cx;
+            let namesakeY = cy;
+            const namesakeId = members.find(
+              (id) => nodeMap[id].title === comm.name,
+            );
+            if (namesakeId) {
+              const sn = nodeMap[namesakeId];
+              namesakeX = transform.applyX(
+                sn.x !== undefined ? sn.x : sn._sx || W / 2,
+              );
+              namesakeY = transform.applyY(
+                sn.y !== undefined ? sn.y : sn._sy || H / 2,
+              );
+            }
+
+            drawnComms.push({
+              name: comm.name,
+              cx: namesakeX,
+              cy: namesakeY,
+              cid,
+            });
+          });
+
+          // Labels stored – drawn after nodes so they're always on top
+          // Only populate when zoomed in close enough (raised to 1.5)
+          window._pendingCommLabels = transform.k > 1.5 ? drawnComms : [];
+        }
+
         // ── Active Selection Logic ──
         // A label click stores {isLabel:true, cid:"..."} in selectedNode
         let activeId = null;
@@ -1577,94 +1918,110 @@
             ? String(nodeMap[activeId].community)
             : null;
         } else if (selectedNode) {
-          selId = selectedNode.id;
-          activeId = selId;
-          activeNeighbours = adjMap[activeId];
-          activeCid = nodeMap[activeId]?.community
-            ? String(nodeMap[activeId].community)
-            : null;
+          if (selectedNode.isLabel) {
+            activeCid = selectedNode.cid;
+            // The whole community is "active"
+            activeNeighbours = new Set(commGroups[activeCid] || []);
+          } else {
+            selId = selectedNode.id;
+            activeId = selId;
+            activeNeighbours = adjMap[activeId];
+            activeCid = nodeMap[activeId]?.community
+              ? String(nodeMap[activeId].community)
+              : null;
+          }
         }
 
-        // Links
-        const activeSet = activeNeighbours || new Set();
-        if (edgesReady) {
-          simLinks.forEach((l) => {
-            const src = simNodes[l.source.index ?? l.source];
-            const tgt = simNodes[l.target.index ?? l.target];
-            if (!src || !tgt) return;
+        // ── Edges ────────────────────────────────────────────────────
+        simLinks.forEach((l) => {
+          const s = l.source,
+            t = l.target;
+          if (typeof s !== "object" || typeof t !== "object") return;
+          const sx = transform.applyX(s.x),
+            sy = transform.applyY(s.y);
+          const tx = transform.applyX(t.x),
+            ty = transform.applyY(t.y);
 
-            const [x1, y1] = worldToScreen(src.x, src.y);
-            const [x2, y2] = worldToScreen(tgt.x, tgt.y);
-            const touchesActive =
-              activeId && (src.id === activeId || tgt.id === activeId);
-            const nbNb =
-              selId &&
-              !hovId &&
-              activeNeighbours &&
-              activeNeighbours.has(src.id) &&
-              activeNeighbours.has(tgt.id);
+          const touchesActive =
+            activeId && (s.id === activeId || t.id === activeId);
+          const nbNb =
+            selId &&
+            !hovId &&
+            activeNeighbours &&
+            activeNeighbours.has(s.id) &&
+            activeNeighbours.has(t.id);
 
-            let edgeAlpha, lw;
-            if (touchesActive) {
-              edgeAlpha = hovId ? 0.92 : 0.82;
-              lw = selId && !hovId ? 2.2 : 1.5;
-            } else if (nbNb) {
-              edgeAlpha = 0.5;
-              lw = 1.2;
-            } else {
-              edgeAlpha = activeId ? 0.03 : 0.18;
-              lw = 0.6;
-            }
-            ctx.globalAlpha = edgeAlpha;
-            ctx.lineWidth = lw;
+          let edgeAlpha, lw;
+          if (touchesActive) {
+            edgeAlpha = hovId ? 0.92 : 0.82;
+            lw = selId && !hovId ? 2.2 : 1.5;
+          } else if (nbNb) {
+            edgeAlpha = 0.5;
+            lw = 1.2;
+          } else {
+            edgeAlpha = activeId ? 0.03 : 0.18;
+            lw = 0.6;
+          }
+          ctx.globalAlpha = edgeAlpha;
+          ctx.lineWidth = lw;
 
-            // Gradient: source node colour → target node colour
-            const isHighlit = touchesActive || nbNb;
-            if (isHighlit) {
-              const grad = ctx.createLinearGradient(x1, y1, x2, y2);
-              grad.addColorStop(0, src._color || "#58a6ff");
-              grad.addColorStop(1, tgt._color || "#a78bfa");
-              ctx.strokeStyle = grad;
-            } else {
-              ctx.strokeStyle = "#1c3050";
-            }
+          // Gradient: source node colour → target node colour
+          const isHighlit = touchesActive || nbNb;
+          if (isHighlit) {
+            const grad = ctx.createLinearGradient(sx, sy, tx, ty);
+            grad.addColorStop(0, s._color || "#58a6ff");
+            grad.addColorStop(1, t._color || "#a78bfa");
+            ctx.strokeStyle = grad;
+          } else {
+            ctx.strokeStyle = "#1c3050";
+          }
 
-            // Cross-community highlighted edges: gentle curve for visual clarity
-            ctx.beginPath();
-            if (l._inter && isHighlit) {
-              const mx = (x1 + x2) / 2,
-                my = (y1 + y2) / 2;
-              const dx = x2 - x1,
-                dy = y2 - y1;
-              const len = Math.sqrt(dx * dx + dy * dy) || 1;
-              const bend = Math.min(len * 0.2, 55);
-              ctx.moveTo(x1, y1);
-              ctx.quadraticCurveTo(
-                mx - (dy / len) * bend,
-                my + (dx / len) * bend,
-                x2,
-                y2,
-              );
-            } else {
-              ctx.moveTo(x1, y1);
-              ctx.lineTo(x2, y2);
-            }
-            ctx.stroke();
-          });
-        }
+          // Cross-community highlighted edges: gentle curve for visual clarity
+          ctx.beginPath();
+          if (l._inter && isHighlit) {
+            const mx = (sx + tx) / 2,
+              my = (sy + ty) / 2;
+            const dx = tx - sx,
+              dy = ty - sy;
+            const len = Math.sqrt(dx * dx + dy * dy) || 1;
+            const bend = Math.min(len * 0.2, 55);
+            ctx.moveTo(sx, sy);
+            ctx.quadraticCurveTo(
+              mx - (dy / len) * bend,
+              my + (dx / len) * bend,
+              tx,
+              ty,
+            );
+          } else {
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(tx, ty);
+          }
+          ctx.stroke();
+        });
         ctx.globalAlpha = 1;
 
-        // Nodes
+        // ── Nodes ───────────────────────────────────────────────────
         simNodes.forEach((n) => {
-          const [sx, sy] = worldToScreen(n.x, n.y);
-          const r = n._r * Math.max(0.5, Math.min(2, transform.k * 0.8));
-          const isHov = hovId === n.id;
-          const isSel = selId === n.id;
-          const isActiveNeighbour = activeSet.has(n.id);
-          const dimmed = activeId && !isHov && !isSel && !isActiveNeighbour;
-          const alpha = dimmed ? 0.25 : 0.95;
-          const glowR = Math.max(r * 1.35, 8);
+          const sx = transform.applyX(n.x),
+            sy = transform.applyY(n.y);
+          const r = Math.max(n._r * transform.k, 2);
 
+          const isHov = n.id === hovId;
+          const isSel = n.id === selId;
+          const isNeighbour = activeNeighbours && activeNeighbours.has(n.id);
+
+          let alpha = 1,
+            glowR = r;
+          if (activeId) {
+            if (isHov || isSel) {
+              alpha = 1;
+              glowR = r * 1.7;
+            } else if (isNeighbour) {
+              alpha = 0.88;
+            } else {
+              alpha = 0.14;
+            }
+          }
           ctx.globalAlpha = alpha;
 
           // Glow for hovered or selected
@@ -1691,7 +2048,7 @@
           ctx.fillStyle = n._color;
           ctx.fill();
 
-          // Ring stroke: white for hover, gold for selected
+          // Ring stroke: white for hover, gold/purple for selected
           if (isHov || isSel) {
             ctx.strokeStyle = isSel && !isHov ? "#f0c040" : "#ffffff";
             ctx.lineWidth = isSel ? 2 : 1.5;
@@ -1700,11 +2057,31 @@
         });
         ctx.globalAlpha = 1;
 
+        // ── Community labels: show all when idle, only active node's community on hover/click ─
+        if (showLabels && window._pendingCommLabels?.length) {
+          // When a node is active, only show its own community's label
+          const activeCid = activeId
+            ? String(nodeMap[activeId]?.community)
+            : null;
+          window._pendingCommLabels.forEach(({ name, cx, cy, cid }) => {
+            if (activeCid && cid !== activeCid) return; // hide other communities
+            drawWrappedLabel(
+              ctx,
+              name,
+              cx,
+              cy - 6 * transform.k,
+              120 * transform.k,
+              transform.k,
+            );
+          });
+        }
+
         ctx.restore();
       }
 
       // ══════════════════════════════════════════════════════════════
-
+      //  WORD-WRAPPED COMMUNITY LABEL
+      // ══════════════════════════════════════════════════════════════
       function drawWrappedLabel(ctx, text, x, y, maxWidth, scale) {
         const fontSize = Math.max(9, Math.min(12, 10 * scale));
         ctx.font = `500 ${fontSize}px Inter, Segoe UI, sans-serif`;
@@ -1777,6 +2154,27 @@
         const wx = transform.invertX(e.clientX - rect.left);
         const wy = transform.invertY(e.clientY - rect.top);
 
+        // 1. Check labels first (drawn on top)
+        if (showLabels && window._pendingCommLabels && transform.k > 1.5) {
+          for (const lbl of window._pendingCommLabels) {
+            // Roughly estimate label bounding box
+            const lx = transform.invertX(lbl.cx);
+            const ly = transform.invertY(lbl.cy - 6 * transform.k);
+            const w = 120 / transform.k;
+            const h = 20 / transform.k;
+            // Center-aligned text hit box
+            if (
+              wx >= lx - w / 2 &&
+              wx <= lx + w / 2 &&
+              wy >= ly - h &&
+              wy <= ly + h / 2
+            ) {
+              return { isLabel: true, label: lbl.name, cid: lbl.cid };
+            }
+          }
+        }
+
+        // 2. Check nodes
         let best = null,
           bestD2 = Infinity;
         simNodes.forEach((n) => {
@@ -1797,9 +2195,9 @@
         if (best !== hoveredNode) {
           hoveredNode = best;
           redraw();
-          if (best) showTooltip(best, e.clientX, e.clientY);
+          if (best && !best.isLabel) showTooltip(best, e.clientX, e.clientY);
           else hideTooltip();
-        } else if (best) {
+        } else if (best && !best.isLabel) {
           moveTooltip(e.clientX, e.clientY);
         }
       }
@@ -1808,6 +2206,9 @@
       const selPanel = document.getElementById("sel-panel");
 
       function showTooltip(n, cx, cy) {
+        // Skip tooltip for labels
+        if (n.isLabel) return;
+
         const diff = n.difficulty || "Unknown";
         const topics = (n.topics || [])
           .map((t) => `<span class='topic-tag'>${t}</span>`)
@@ -1888,8 +2289,6 @@
       //  BOOTSTRAP
       // ══════════════════════════════════════════════════════════════
       init();
-      
     </script>
-    <a href="https://www.flaticon.com/free-icons/node" title="node icons">Node icons created by Awicon - Flaticon</a>
   </body>
 </html>
