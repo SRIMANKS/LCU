@@ -467,13 +467,13 @@
         position: fixed;
         bottom: 16px;
         left: 16px;
-        width: 300px;
-        max-height: 55vh;
+        width: 250px;
+        max-height: 42vh;
         background: linear-gradient(160deg, #1a2030, #111827);
         border: 1px solid #30363d;
         border-radius: 12px;
-        padding: 14px 16px 12px;
-        font-size: 12px;
+        padding: 11px 12px 10px;
+        font-size: 11px;
         color: #c9d1d9;
         z-index: 500;
         display: none;
@@ -506,7 +506,7 @@
         margin-bottom: 1px;
       }
       .sp-title {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         color: #e6edf3;
         line-height: 1.35;
@@ -701,6 +701,81 @@
       #physics-apply-btn:hover {
         background: rgba(88, 166, 255, 0.28);
       }
+
+      /* ── Responsive layout ── */
+      @media (max-width: 1100px) {
+        #header {
+          padding: 10px 12px 8px;
+        }
+        .header-top {
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .ship-link {
+          margin-left: 0;
+        }
+        .controls-row {
+          gap: 6px;
+          align-items: stretch;
+        }
+        .ctrl-sep {
+          display: none;
+        }
+        .ctrl {
+          min-width: 170px;
+          flex: 1 1 220px;
+        }
+        .chip-filter,
+        .chip-row {
+          min-width: 0;
+          max-width: 100%;
+          width: 100%;
+        }
+        input[type="text"] {
+          width: 100%;
+          min-width: 0;
+        }
+        #playlist-url {
+          width: 100% !important;
+        }
+      }
+
+      @media (max-width: 760px) {
+        h1 {
+          font-size: 15px;
+        }
+        .header-top h1 {
+          width: 100%;
+        }
+        .header-top h1 img {
+          width: 24px !important;
+          height: 24px !important;
+          padding: 2px !important;
+        }
+        .ship-link {
+          width: 100%;
+          text-align: center;
+        }
+        .controls-row {
+          flex-direction: column;
+        }
+        .ctrl {
+          width: 100%;
+          min-width: 0;
+          flex: 1 1 auto;
+        }
+        #stats {
+          gap: 8px;
+          flex-wrap: wrap;
+          margin-top: 8px;
+        }
+        #sel-panel {
+          width: min(90vw, 250px);
+          max-height: 38vh;
+          left: 10px;
+          bottom: 10px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -817,7 +892,7 @@
           <div>Nodes: <span class="sv" id="s-nodes">0</span></div>
           <div>Edges: <span class="sv" id="s-edges">0</span></div>
           <div style="color: #58a6ff; font-size: 10px; margin-left: 4px">
-            Hover a node • Scroll/drag to navigate
+            Hover a node • Scroll/drag to navigate • Best viewed on laptop/desktop
           </div>
         </div>
       </div>
@@ -936,6 +1011,13 @@
       let selectedNode = null; // pinned on click
       let searchHit = null;
       let animFrame = null;
+
+      function shouldShowHoverTooltip() {
+        return !(
+          window.matchMedia("(max-width: 760px)").matches ||
+          window.matchMedia("(pointer: coarse)").matches
+        );
+      }
 
       // ══════════════════════════════════════════════════════════════
       //  LOAD & INIT
@@ -1793,6 +1875,12 @@
       }
 
       function onMouseMove(e) {
+        if (!shouldShowHoverTooltip()) {
+          hoveredNode = null;
+          hideTooltip();
+          redraw();
+          return;
+        }
         const best = pickNode(e);
         if (best !== hoveredNode) {
           hoveredNode = best;
@@ -1808,6 +1896,7 @@
       const selPanel = document.getElementById("sel-panel");
 
       function showTooltip(n, cx, cy) {
+        if (!shouldShowHoverTooltip()) return;
         const diff = n.difficulty || "Unknown";
         const topics = (n.topics || [])
           .map((t) => `<span class='topic-tag'>${t}</span>`)
@@ -1846,7 +1935,7 @@
           .filter(Boolean)
           .filter((nb) => visSet.has(nb.id))
           .sort((a, b) => b._deg - a._deg)
-          .slice(0, 30);
+          .slice(0, 16);
         const nbHtml = neighbours.length
           ? neighbours
               .map(
